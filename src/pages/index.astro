@@ -1,11 +1,59 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+import Layout from "../layouts/Layout.astro";
+import { getSecret } from "astro:env/server";
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const target = new Date(getSecret("TARGET_JAKYAO_DATE")!).getTime();
+const sk_generation = Number(getSecret("SK_GENERATION"));
 ---
 
 <Layout>
-	<Welcome />
+    <div class="flex flex-col h-dvh p-6 items-center">
+        <div class="flex flex-col flex-1 items-center justify-center gap-4">
+            <div class="text-2xl font-mono">
+                <span id="days"></span> days
+                <span id="hours"></span> hours
+                <span id="minutes"></span> minutes
+                <span id="seconds"></span> seconds
+            </div>
+
+            until jakyao SK{sk_generation}
+        </div>
+
+        {
+            new Intl.DateTimeFormat("en-GB", {
+                timeZone: "asia/bangkok",
+                dateStyle: "long",
+                timeStyle: "long",
+            }).format(target)
+        }
+    </div>
+
+    <script define:vars={{ target }}>
+        function updateCountdown() {
+            const diff = target - Date.now();
+
+            const totalSeconds = Math.floor(diff / 1000);
+
+            const days = Math.floor(totalSeconds / (3600 * 24));
+            const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+
+            document.getElementById("days").textContent = days.toString();
+            document.getElementById("hours").textContent = hours.toString();
+            document.getElementById("minutes").textContent = minutes.toString();
+            document.getElementById("seconds").textContent = seconds.toString();
+        }
+
+        function tick() {
+            updateCountdown();
+            const delay = 1000 - (Date.now() % 1000);
+            setTimeout(() => {
+                updateCountdown();
+                setInterval(updateCountdown, 1000);
+            }, delay);
+        }
+
+        tick();
+    </script>
 </Layout>
