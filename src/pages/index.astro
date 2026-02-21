@@ -1,85 +1,22 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import { getSecret } from "astro:env/server";
+import Countdown from "../components/Countdown.astro";
+import Footer from "../components/Footer.astro";
 
-const target = new Date(getSecret("TARGET_JAKYAO_DATE")!).getTime();
-const overtime = Date.now() > target;
+const target = new Date(getSecret("TARGET_JAKYAO_DATE")!);
+const overtime = Date.now() > target.getTime();
 const sk_generation = Number(getSecret("SK_GENERATION"));
 ---
 
 <Layout>
     <div class="flex flex-col h-dvh p-6 items-center">
-        <div class="flex flex-col flex-1 items-center justify-center gap-4">
-            <div class="text-2xl font-mono">
-                <span><span id="days"></span> days</span>
-                <span><span id="hours"></span> hours</span>
-                <span><span id="minutes"></span> minutes</span>
-                <span><span id="seconds"></span> seconds</span>
-            </div>
+        <div class="flex flex-col flex-1 items-center justify-center gap-3">
+            <Countdown target={target.getTime()} />
 
             {overtime ? "after" : "until"} jakyao SK{sk_generation}
         </div>
 
-        {
-            new Intl.DateTimeFormat("en-GB", {
-                timeZone: "asia/bangkok",
-                dateStyle: "long",
-                timeStyle: "long",
-            }).format(target)
-        }
+        <Footer target={target} />
     </div>
 </Layout>
-
-<script
-    is:inline
-    src="https://cdn.jsdelivr.net/npm/@hiseb/confetti@2.1.0/dist/confetti.min.js"
-></script>
-<script define:vars={{ target }}>
-
-    let celebrated = false;
-
-    function celebrate() {
-        requestAnimationFrame(() => {
-            confetti({
-                count: 10,
-                size: 1,
-            });
-        });
-    }
-
-    function updateCountdown() {
-        const diff = target - Date.now();
-
-        if (diff <= 0 && !celebrated) {
-            celebrated = true;
-            celebrate();
-        }
-
-        const totalSeconds = Math.floor(Math.abs(diff) / 1000);
-
-        const values = {
-            days: Math.floor(totalSeconds / (3600 * 24)),
-            hours: Math.floor((totalSeconds % (3600 * 24)) / 3600),
-            minutes: Math.floor((totalSeconds % 3600) / 60),
-            seconds: totalSeconds % 60,
-        };
-
-        Object.entries(values).forEach(([id, value]) => {
-            const el = document.getElementById(id);
-
-            if (value > 0) {
-                el.textContent = value.toString();
-                el.parentNode.style.display = "inline";
-            } else {
-                el.parentNode.style.display = "none";
-            }
-        });
-    }
-
-    function tick() {
-        updateCountdown();
-        setTimeout(tick, 1000 - (Date.now() % 100));
-    }
-
-    tick();
-</script>

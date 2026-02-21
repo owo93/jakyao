@@ -12,9 +12,10 @@ export default defineConfig({
     experimental: {
         fonts: [
             {
-                provider: fontProviders.google(),
-                name: "Inter",
-                cssVariable: "--font-inter",
+                name: "JetBrains Mono",
+                cssVariable: "--font-jetbrains-mono",
+                provider: fontProviders.fontsource(),
+                fallbacks: ["monospace"],
             },
         ],
     },
