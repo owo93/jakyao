@@ -30,27 +30,29 @@ const sk_generation = Number(getSecret("SK_GENERATION"));
     </div>
 </Layout>
 
-    <script define:vars={{ target }}>
-        function updateCountdown() {
-            const diff = target - Date.now();
+<script
+    is:inline
+    src="https://cdn.jsdelivr.net/npm/@hiseb/confetti@2.1.0/dist/confetti.min.js"
+></script>
+<script define:vars={{ target }}>
 
-            const totalSeconds = Math.floor(diff / 1000);
+    let celebrated = false;
 
-            const days = Math.floor(totalSeconds / (3600 * 24));
-            const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
-            const minutes = Math.floor((totalSeconds % 3600) / 60);
-            const seconds = totalSeconds % 60;
+    function celebrate() {
+        requestAnimationFrame(() => {
+            confetti({
+                count: 10,
+                size: 1,
+            });
+        });
+    }
 
     function updateCountdown() {
         const diff = target - Date.now();
 
-        function tick() {
-            updateCountdown();
-            const delay = 1000 - (Date.now() % 1000);
-            setTimeout(() => {
-                updateCountdown();
-                setInterval(updateCountdown, 1000);
-            }, delay);
+        if (diff <= 0 && !celebrated) {
+            celebrated = true;
+            celebrate();
         }
 
         const totalSeconds = Math.floor(Math.abs(diff) / 1000);
