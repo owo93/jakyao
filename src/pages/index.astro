@@ -3,6 +3,7 @@ import Layout from "../layouts/Layout.astro";
 import { getSecret } from "astro:env/server";
 
 const target = new Date(getSecret("TARGET_JAKYAO_DATE")!).getTime();
+const overtime = Date.now() > target;
 const sk_generation = Number(getSecret("SK_GENERATION"));
 ---
 
@@ -10,13 +11,13 @@ const sk_generation = Number(getSecret("SK_GENERATION"));
     <div class="flex flex-col h-dvh p-6 items-center">
         <div class="flex flex-col flex-1 items-center justify-center gap-4">
             <div class="text-2xl font-mono">
-                <span id="days"></span> days
-                <span id="hours"></span> hours
-                <span id="minutes"></span> minutes
-                <span id="seconds"></span> seconds
+                <span><span id="days"></span> days</span>
+                <span><span id="hours"></span> hours</span>
+                <span><span id="minutes"></span> minutes</span>
+                <span><span id="seconds"></span> seconds</span>
             </div>
 
-            until jakyao SK{sk_generation}
+            {overtime ? "after" : "until"} jakyao SK{sk_generation}
         </div>
 
         {
@@ -27,6 +28,7 @@ const sk_generation = Number(getSecret("SK_GENERATION"));
             }).format(target)
         }
     </div>
+</Layout>
 
     <script define:vars={{ target }}>
         function updateCountdown() {
@@ -39,11 +41,8 @@ const sk_generation = Number(getSecret("SK_GENERATION"));
             const minutes = Math.floor((totalSeconds % 3600) / 60);
             const seconds = totalSeconds % 60;
 
-            document.getElementById("days").textContent = days.toString();
-            document.getElementById("hours").textContent = hours.toString();
-            document.getElementById("minutes").textContent = minutes.toString();
-            document.getElementById("seconds").textContent = seconds.toString();
-        }
+    function updateCountdown() {
+        const diff = target - Date.now();
 
         function tick() {
             updateCountdown();
@@ -54,6 +53,31 @@ const sk_generation = Number(getSecret("SK_GENERATION"));
             }, delay);
         }
 
-        tick();
-    </script>
-</Layout>
+        const totalSeconds = Math.floor(Math.abs(diff) / 1000);
+
+        const values = {
+            days: Math.floor(totalSeconds / (3600 * 24)),
+            hours: Math.floor((totalSeconds % (3600 * 24)) / 3600),
+            minutes: Math.floor((totalSeconds % 3600) / 60),
+            seconds: totalSeconds % 60,
+        };
+
+        Object.entries(values).forEach(([id, value]) => {
+            const el = document.getElementById(id);
+
+            if (value > 0) {
+                el.textContent = value.toString();
+                el.parentNode.style.display = "inline";
+            } else {
+                el.parentNode.style.display = "none";
+            }
+        });
+    }
+
+    function tick() {
+        updateCountdown();
+        setTimeout(tick, 1000 - (Date.now() % 100));
+    }
+
+    tick();
+</script>
