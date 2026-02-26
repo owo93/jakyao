@@ -15,6 +15,8 @@ export default defineConfig({
                 name: "JetBrains Mono",
                 cssVariable: "--font-jetbrains-mono",
                 provider: fontProviders.fontsource(),
+                subsets: ["latin"],
+                weights: [400],
                 fallbacks: ["monospace"],
             },
         ],
