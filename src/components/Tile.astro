@@ -1,0 +1,57 @@
+---
+const { value, unit, length = 2 } = Astro.props;
+const digits = value.toString().padStart(length, "0").split("");
+---
+
+<div class="flex items-center gap-2 sm:flex-col sm:items-center">
+	<span class="font-mono text-xs opacity-60 sm:text-sm">
+		{unit.toUpperCase()}
+	</span>
+
+	<div class="flex gap-1">
+		{
+			digits.map((d: string) => (
+				<tile-cell class="flex items-center justify-center rounded-md border border-neutral-400 bg-neutral-300 p-3 font-mono text-lg sm:text-xl dark:border-neutral-700 dark:bg-neutral-900">
+					{d}
+				</tile-cell>
+			))
+		}
+	</div>
+</div>
+
+<script define:vars={{ value, length }}>
+	const CHARSET =
+		"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'\"";
+
+	class TileCell extends HTMLElement {
+		_interval = null;
+		scrambleTo(value) {
+			if (this._interval) {
+				clearInterval(this._interval);
+				this._interval = null;
+			}
+
+			let elapsed = 0;
+			const duration = 2000;
+			const intervalMs = 50;
+
+			this._interval = setInterval(() => {
+				elapsed += intervalMs;
+
+				if (elapsed >= duration) {
+					clearInterval(this._interval);
+					this._interval = null;
+					this.textContent = value;
+					return;
+				}
+
+				this.textContent = CHARSET[Math.floor(Math.random() * CHARSET.length)];
+			}, intervalMs);
+		}
+	}
+
+	// register once
+	if (!customElements.get("cell")) {
+		customElements.define("tile-cell", TileCell);
+	}
+</script>

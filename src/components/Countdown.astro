@@ -1,20 +1,35 @@
 ---
 const { target } = Astro.props;
+import Tile from "./Tile.astro";
+const UNITS = {
+	days: { length: 3, label: "d" },
+	hours: { length: 2, label: "h" },
+	minutes: { length: 2, label: "m" },
+	seconds: { length: 2, label: "s" },
+};
 ---
 
-<div class="flex flex-col font-mono text-2xl sm:flex-row sm:space-x-4">
-	<span><span id="days"></span> days</span>
-	<span><span id="hours"></span> hours</span>
-	<span><span id="minutes"></span> minutes</span>
-	<span><span id="seconds"></span> seconds</span>
+<div class="flex flex-col gap-4 font-mono text-2xl sm:flex-row sm:space-x-4">
+	{
+		Object.entries(UNITS).map(([key, cfg]) => (
+			<div id={key}>
+				<Tile
+					value={"0".repeat(cfg.length)}
+					length={cfg.length}
+					unit={cfg.label}
+				/>
+			</div>
+		))
+	}
 </div>
 
 <script
 	is:inline
 	src="https://cdn.jsdelivr.net/npm/@hiseb/confetti@2.1.0/dist/confetti.min.js"
 ></script>
-<script define:vars={{ target }}>
+<script define:vars={{ target, UNITS }}>
 	let celebrated = false;
+	let initialized = false;
 
 	function celebrate() {
 		requestAnimationFrame(() => {
@@ -22,6 +37,33 @@ const { target } = Astro.props;
 				count: 10,
 				size: 1,
 			});
+		});
+	}
+
+	function initTiles(values) {
+		Object.entries(UNITS).forEach(([id, cfg]) => {
+			const el = document.getElementById(id);
+			if (!el) return;
+
+			const value = values[id];
+			const digits = value.toString().padStart(cfg.length, "0").split("");
+			const cells = el.querySelectorAll("tile-cell");
+
+			cells.forEach((cell, i) => {
+				cell.scrambleTo?.(digits[i]);
+			});
+		});
+	}
+
+	function updateTiles(cont, value, length) {
+		const digits = value.toString().padStart(length, "0").split("");
+		const cells = cont.querySelectorAll("tile-cell");
+
+		cells.forEach((cell, i) => {
+			const digit = digits[i];
+			if (cell.textContent !== digit) {
+				cell.textContent = digit;
+			}
 		});
 	}
 
@@ -42,15 +84,17 @@ const { target } = Astro.props;
 			seconds: totalSeconds % 60,
 		};
 
-		Object.entries(values).forEach(([id, value]) => {
-			const el = document.getElementById(id);
+		if (!initialized) {
+			initTiles(values);
+			initialized = true;
+			return;
+		}
 
-			if (value > 0) {
-				el.textContent = value.toString();
-				el.parentNode.style.display = "inline";
-			} else {
-				el.parentNode.style.display = "none";
-			}
+		Object.entries(UNITS).forEach(([id, cfg]) => {
+			const el = document.getElementById(id);
+			if (!el) return;
+
+			updateTiles(el, values[id], cfg.length);
 		});
 	}
 
