@@ -2,62 +2,62 @@
 const { target } = Astro.props;
 ---
 
-<div class="text-2xl font-mono flex flex-col sm:flex-row sm:space-x-4">
-    <span><span id="days"></span> days</span>
-    <span><span id="hours"></span> hours</span>
-    <span><span id="minutes"></span> minutes</span>
-    <span><span id="seconds"></span> seconds</span>
+<div class="flex flex-col font-mono text-2xl sm:flex-row sm:space-x-4">
+	<span><span id="days"></span> days</span>
+	<span><span id="hours"></span> hours</span>
+	<span><span id="minutes"></span> minutes</span>
+	<span><span id="seconds"></span> seconds</span>
 </div>
 
 <script
-    is:inline
-    src="https://cdn.jsdelivr.net/npm/@hiseb/confetti@2.1.0/dist/confetti.min.js"
+	is:inline
+	src="https://cdn.jsdelivr.net/npm/@hiseb/confetti@2.1.0/dist/confetti.min.js"
 ></script>
 <script define:vars={{ target }}>
-    let celebrated = false;
+	let celebrated = false;
 
-    function celebrate() {
-        requestAnimationFrame(() => {
-            confetti({
-                count: 10,
-                size: 1,
-            });
-        });
-    }
+	function celebrate() {
+		requestAnimationFrame(() => {
+			confetti({
+				count: 10,
+				size: 1,
+			});
+		});
+	}
 
-    function updateCountdown() {
-        const diff = new Date(target).getTime() - Date.now();
+	function updateCountdown() {
+		const diff = new Date(target).getTime() - Date.now();
 
-        if (diff <= 0 && !celebrated) {
-            celebrated = true;
-            celebrate();
-        }
+		if (diff <= 0 && !celebrated) {
+			celebrated = true;
+			celebrate();
+		}
 
-        const totalSeconds = Math.floor(Math.abs(diff) / 1000);
+		const totalSeconds = Math.floor(Math.abs(diff) / 1000);
 
-        const values = {
-            days: Math.floor(totalSeconds / (3600 * 24)),
-            hours: Math.floor((totalSeconds % (3600 * 24)) / 3600),
-            minutes: Math.floor((totalSeconds % 3600) / 60),
-            seconds: totalSeconds % 60,
-        };
+		const values = {
+			days: Math.floor(totalSeconds / (3600 * 24)),
+			hours: Math.floor((totalSeconds % (3600 * 24)) / 3600),
+			minutes: Math.floor((totalSeconds % 3600) / 60),
+			seconds: totalSeconds % 60,
+		};
 
-        Object.entries(values).forEach(([id, value]) => {
-            const el = document.getElementById(id);
+		Object.entries(values).forEach(([id, value]) => {
+			const el = document.getElementById(id);
 
-            if (value > 0) {
-                el.textContent = value.toString();
-                el.parentNode.style.display = "inline";
-            } else {
-                el.parentNode.style.display = "none";
-            }
-        });
-    }
+			if (value > 0) {
+				el.textContent = value.toString();
+				el.parentNode.style.display = "inline";
+			} else {
+				el.parentNode.style.display = "none";
+			}
+		});
+	}
 
-    function tick() {
-        updateCountdown();
-        setTimeout(tick, 1000 - (Date.now() % 1000));
-    }
+	function tick() {
+		updateCountdown();
+		setTimeout(tick, 1000 - (Date.now() % 1000));
+	}
 
-    tick();
+	tick();
 </script>

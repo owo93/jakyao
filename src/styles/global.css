@@ -1,11 +1,11 @@
 @import "tailwindcss";
 
 @theme inline {
-    --font-mono: var(--font-jetbrains-mono);
-    --font-sans: "Inter", -apple-system, "sans-serif";
+	--font-mono: var(--font-geist-mono);
+	--font-sans: "Inter", -apple-system, "sans-serif";
 }
 
 body {
-    @apply dark:bg-neutral-950;
-    @apply dark:text-neutral-200;
+	@apply dark:bg-neutral-950;
+	@apply dark:text-neutral-200;
 }

@@ -3,11 +3,11 @@ const { target } = Astro.props;
 ---
 
 <p class="text-sm">
-    {
-        new Intl.DateTimeFormat("en-GB", {
-            timeZone: "asia/bangkok",
-            dateStyle: "long",
-            timeStyle: "long",
-        }).format(target)
-    }
+	{
+		new Intl.DateTimeFormat("en-GB", {
+			timeZone: "asia/bangkok",
+			dateStyle: "long",
+			timeStyle: "long",
+		}).format(target)
+	}
 </p>

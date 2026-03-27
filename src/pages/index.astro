@@ -10,13 +10,13 @@ const sk_generation = Number(getSecret("SK_GENERATION"));
 ---
 
 <Layout>
-    <div class="flex flex-col h-dvh p-6 items-center">
-        <div class="flex flex-col flex-1 items-center justify-center gap-3">
-            <Countdown target={target.getTime()} />
+	<div class="flex h-dvh flex-col items-center p-6">
+		<div class="flex flex-1 flex-col items-center justify-center gap-3">
+			<Countdown target={target.getTime()} />
 
-            {overtime ? "after" : "until"} jakyao SK{sk_generation}
-        </div>
+			{overtime ? "after" : "until"} jakyao SK{sk_generation}
+		</div>
 
-        <Footer target={target} />
-    </div>
+		<Footer target={target} />
+	</div>
 </Layout>
