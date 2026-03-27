@@ -11,7 +11,7 @@ const digits = value.toString().padStart(length, "0").split("");
 	<div class="flex gap-1">
 		{
 			digits.map((d: string) => (
-				<tile-cell class="flex items-center justify-center rounded-md border border-neutral-400 bg-neutral-300 p-3 font-mono text-lg sm:text-xl dark:border-neutral-700 dark:bg-neutral-900">
+				<tile-cell class="flex items-center justify-center rounded-md border-4 border-double border-neutral-300 bg-neutral-100 p-3 font-mono text-lg transition-colors duration-350 hover:bg-neutral-700 sm:text-xl dark:border-neutral-700 dark:bg-neutral-900">
 					{d}
 				</tile-cell>
 			))
@@ -20,8 +20,7 @@ const digits = value.toString().padStart(length, "0").split("");
 </div>
 
 <script define:vars={{ value, length }}>
-	const CHARSET =
-		"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'\"";
+	const CHARSET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+{}";
 
 	class TileCell extends HTMLElement {
 		_interval = null;
@@ -32,7 +31,7 @@ const digits = value.toString().padStart(length, "0").split("");
 			}
 
 			let elapsed = 0;
-			const duration = 2000;
+			const duration = 1000;
 			const intervalMs = 50;
 
 			this._interval = setInterval(() => {
@@ -42,16 +41,18 @@ const digits = value.toString().padStart(length, "0").split("");
 					clearInterval(this._interval);
 					this._interval = null;
 					this.textContent = value;
+					this.style.borderColor = "";
 					return;
 				}
 
 				this.textContent = CHARSET[Math.floor(Math.random() * CHARSET.length)];
+				this.style.borderColor = `hsl(${Math.random() * -180} 80% 67%)`;
 			}, intervalMs);
 		}
 	}
 
 	// register once
-	if (!customElements.get("cell")) {
+	if (!customElements.get("title-cell")) {
 		customElements.define("tile-cell", TileCell);
 	}
 </script>
