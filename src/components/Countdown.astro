@@ -2,106 +2,106 @@
 const { target } = Astro.props;
 import Tile from "./Tile.astro";
 const UNITS = {
-	days: { length: 3, label: "d" },
-	hours: { length: 2, label: "h" },
-	minutes: { length: 2, label: "m" },
-	seconds: { length: 2, label: "s" },
+  days: { length: 3, label: "d" },
+  hours: { length: 2, label: "h" },
+  minutes: { length: 2, label: "m" },
+  seconds: { length: 2, label: "s" },
 };
 ---
 
 <div class="flex flex-col gap-4 font-mono text-2xl sm:flex-row sm:space-x-4">
-	{
-		Object.entries(UNITS).map(([key, cfg]) => (
-			<div id={key}>
-				<Tile
-					value={"0".repeat(cfg.length)}
-					length={cfg.length}
-					unit={cfg.label}
-				/>
-			</div>
-		))
-	}
+  {
+    Object.entries(UNITS).map(([key, cfg]) => (
+      <div id={key}>
+        <Tile
+          value={"0".repeat(cfg.length)}
+          length={cfg.length}
+          unit={cfg.label}
+        />
+      </div>
+    ))
+  }
 </div>
 
 <script
-	is:inline
-	src="https://cdn.jsdelivr.net/npm/@hiseb/confetti@2.1.0/dist/confetti.min.js"
+  is:inline
+  src="https://cdn.jsdelivr.net/npm/@hiseb/confetti@2.1.0/dist/confetti.min.js"
 ></script>
 <script define:vars={{ target, UNITS }}>
-	let celebrated = false;
-	let initialized = false;
+  let celebrated = false;
+  let initialized = false;
 
-	function celebrate() {
-		requestAnimationFrame(() => {
-			confetti({
-				count: 10,
-				size: 1,
-			});
-		});
-	}
+  function celebrate() {
+    requestAnimationFrame(() => {
+      confetti({
+        count: 10,
+        size: 1,
+      });
+    });
+  }
 
-	function initTiles(values) {
-		Object.entries(UNITS).forEach(([id, cfg]) => {
-			const el = document.getElementById(id);
-			if (!el) return;
+  function initTiles(values) {
+    Object.entries(UNITS).forEach(([id, cfg]) => {
+      const el = document.getElementById(id);
+      if (!el) return;
 
-			const value = values[id];
-			const digits = value.toString().padStart(cfg.length, "0").split("");
-			const cells = el.querySelectorAll("tile-cell");
+      const value = values[id];
+      const digits = value.toString().padStart(cfg.length, "0").split("");
+      const cells = el.querySelectorAll("tile-cell");
 
-			cells.forEach((cell, i) => {
-				cell.scrambleTo?.(digits[i]);
-			});
-		});
-	}
+      cells.forEach((cell, i) => {
+        cell.scrambleTo?.(digits[i]);
+      });
+    });
+  }
 
-	function updateTiles(cont, value, length) {
-		const digits = value.toString().padStart(length, "0").split("");
-		const cells = cont.querySelectorAll("tile-cell");
+  function updateTiles(cont, value, length) {
+    const digits = value.toString().padStart(length, "0").split("");
+    const cells = cont.querySelectorAll("tile-cell");
 
-		cells.forEach((cell, i) => {
-			const digit = digits[i];
-			if (cell.textContent !== digit) {
-				cell.textContent = digit;
-			}
-		});
-	}
+    cells.forEach((cell, i) => {
+      const digit = digits[i];
+      if (cell.textContent !== digit) {
+        cell.textContent = digit;
+      }
+    });
+  }
 
-	function updateCountdown() {
-		const diff = new Date(target).getTime() - Date.now();
+  function updateCountdown() {
+    const diff = new Date(target).getTime() - Date.now();
 
-		if (diff <= 0 && !celebrated) {
-			celebrated = true;
-			celebrate();
-		}
+    if (diff <= 0 && !celebrated) {
+      celebrated = true;
+      celebrate();
+    }
 
-		const totalSeconds = Math.floor(Math.abs(diff) / 1000);
+    const totalSeconds = Math.floor(Math.abs(diff) / 1000);
 
-		const values = {
-			days: Math.floor(totalSeconds / (3600 * 24)),
-			hours: Math.floor((totalSeconds % (3600 * 24)) / 3600),
-			minutes: Math.floor((totalSeconds % 3600) / 60),
-			seconds: totalSeconds % 60,
-		};
+    const values = {
+      days: Math.floor(totalSeconds / (3600 * 24)),
+      hours: Math.floor((totalSeconds % (3600 * 24)) / 3600),
+      minutes: Math.floor((totalSeconds % 3600) / 60),
+      seconds: totalSeconds % 60,
+    };
 
-		if (!initialized) {
-			initTiles(values);
-			initialized = true;
-			return;
-		}
+    if (!initialized) {
+      initTiles(values);
+      initialized = true;
+      return;
+    }
 
-		Object.entries(UNITS).forEach(([id, cfg]) => {
-			const el = document.getElementById(id);
-			if (!el) return;
+    Object.entries(UNITS).forEach(([id, cfg]) => {
+      const el = document.getElementById(id);
+      if (!el) return;
 
-			updateTiles(el, values[id], cfg.length);
-		});
-	}
+      updateTiles(el, values[id], cfg.length);
+    });
+  }
 
-	function tick() {
-		updateCountdown();
-		setTimeout(tick, 1000 - (Date.now() % 1000));
-	}
+  function tick() {
+    updateCountdown();
+    setTimeout(tick, 1000 - (Date.now() % 1000));
+  }
 
-	tick();
+  tick();
 </script>

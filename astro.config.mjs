@@ -5,20 +5,20 @@ import tailwindcss from "@tailwindcss/vite";
 
 // https://astro.build/config
 export default defineConfig({
-	vite: {
-		plugins: [tailwindcss()],
-	},
+  vite: {
+    plugins: [tailwindcss()],
+  },
 
-	experimental: {
-		fonts: [
-			{
-				name: "Geist Mono",
-				cssVariable: "--font-geist-mono",
-				provider: fontProviders.fontsource(),
-				subsets: ["latin"],
-				weights: [400],
-				fallbacks: ["monospace"],
-			},
-		],
-	},
+  experimental: {
+    fonts: [
+      {
+        name: "Geist Mono",
+        cssVariable: "--font-geist-mono",
+        provider: fontProviders.fontsource(),
+        subsets: ["latin"],
+        weights: [400],
+        fallbacks: ["monospace"],
+      },
+    ],
+  },
 });
