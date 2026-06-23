@@ -13,9 +13,14 @@ const sk_generation = Number(getSecret("SK_GENERATION"));
   <div class="flex h-dvh flex-col items-center p-6">
     <div class="flex flex-1 flex-col items-center justify-center gap-6">
       <Countdown target={target.getTime()} />
-      <span class="font-mono uppercase opacity-80"
-        >{overtime ? "after" : "until"} jakyao SK{sk_generation}</span
-      >
+      <span class="flex flex-col">
+        <span class="font-mono uppercase"
+          >{overtime ? "after" : "until"} jakyao SK{sk_generation}</span
+        >
+        <span class="font-sans text-xs text-neutral-500 lowercase opacity-70">
+          & t. Atipol's birthday
+        </span>
+      </span>
     </div>
 
     <Footer target={target} />
